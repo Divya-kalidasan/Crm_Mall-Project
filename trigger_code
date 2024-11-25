@@ -1,0 +1,39 @@
+//Apex Trigger to send an email if the tenant has not paid 50 Percent of Total Rent.
+
+public class LeaseTrackingTriggerHandler {
+       public static void method1(List<Lease_Tracking__c> lt1)
+          {
+              for(Lease_Tracking__c lt2: lt1 )
+              {
+                 if(lt2.Amount_to_be_paid_c > (lt2.Total_rent_Yearly_c)/2)
+                    {
+                        Messaging.SingleEmailMessage M = New Messaging.SingleEmailMessage();
+                        List<String> ToADD = New List<String>{lt2.Email_id__c};
+
+                        M.setToAddresses(ToADD);
+                        M.setSubject('Regarding the Pending Rent'); 
+                        M.setPlainTextBody('Hello, This is an Reminder for you to complete your due rent by the end this month, your due rent thatneeds to be paid is' +lt2.Amount_to_be_paid__c); 
+
+                        List<Messaging.Email> AB = New List<Messaging.Email>{};
+                        AB.add(M);
+                        Messaging.sendEmail(AB);
+                    }
+              }
+          }
+}
+
+
+//An Apex Trigger on Tenant Object to Show error if the pan card is invalid.
+
+public class TenantTriggerhandler {
+       public static void method1(List<Tenant__c> te)
+    {
+        for(Tenant__c tenant : te)
+        {
+            if(tenant.Pan_Card_no__c.length() > 10)
+            {
+               tenant.addError('This Pan Card number is invalid, Please Enter Valid Pan Card number');
+            }
+        }
+    }
+}
